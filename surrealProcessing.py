@@ -162,3 +162,21 @@ def surreal2pavlakos(path, output):
 
 
     np.savetxt((output + '_videos.txt'), np.array(videos_list), fmt='%s')
+
+
+#reduce the dataset size
+def reduceAnnotation(input, compression, output):
+    with h5py.File(input, 'r') as i:
+
+        N = len(i['zind'])
+        M = int(compression * N)
+        R = np.random.choice(N, M)
+        R.sort()
+
+        with h5py.File(output, 'w') as o:
+            o.create_dataset("center", data=np.array(i["center"])[R])
+            o.create_dataset("part", data=np.array(i["part"])[R])
+            o.create_dataset("scale", data=np.array(i["scale"])[R])
+            o.create_dataset("zind", data=np.array(i["zind"])[R])
+            o.create_dataset("video_id", data=np.array(i["video_id"])[R])
+            o.create_dataset("frame_id", data=np.array(i["frame_id"])[R])
